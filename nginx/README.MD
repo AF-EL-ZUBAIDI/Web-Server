@@ -1,57 +1,68 @@
-# Nginx Web Server
-This is a tutorial to create and run an Nginx web server on mac
+# Nginx Web Server Tutorial
 
-### Nginx Installation
-Run the following commands in your terminal:
+This tutorial provides step-by-step instructions for setting up and running an Nginx web server on macOS.
 
-1. Install Nginx:
-```
+## Introduction
+
+Nginx is a high-performance web server that is widely used for serving web content. In this tutorial, we will guide you through the process of installing and configuring Nginx on your Mac.
+
+## Nginx Installation
+
+To get started with Nginx, follow these steps:
+
+1. **Install Nginx** using Homebrew:
+```bash
 brew install nginx
 ```
 
-2. Go to the directory of the installation (this is the default directory when you install Nginx):
-```
+2. Navigate to the Nginx installation directory (the default location):
+```bash
 cd /usr/local/etc/nginx
 ```
 
-3. Open VSCode of this directory* (you can also open it from VSCode):
-```
+3. Open the Nginx configuration directory in Visual Studio Code:
+```bash
 code .
 ```
 
-4. Start nginx:
-```
+4. Start Nginx:
+```bash
 nginx
 ```
 
-5. Open the browser to check that the server is running correctly:
-```
+5. Open your web browser and visit the following URL to check if the server is running correctly:
+
+```bash
 http://localhost:8080/
 ```
 
-\* If you an issue running this command, try to create a symbolic link to VSCode:
-```
+If you encounter issues running code ., you can create a symbolic link to Visual Studio Code:
+
+```bash
 sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/
 ```
 
 ### Nginx Terminology
 
-1. We have the key value; pairs, which are also called directives, for example: 
-```
+Before we dive into configuring Nginx, let's briefly explain some key terminology:
+
+1. Directives: These are key-value pairs used in the Nginx configuration, such as:
+```bash
 worker_processes  1;
 ```
 
-2. There are blocks that contain a lot of directives, which are called context:
-```
+2. Contexts: Blocks that contain multiple directives are referred to as contexts. For example:
+```bash
 events {
     worker_connections  1024;
 }
 ```
 
 ### Serving Static Content
-\* Don't forget to change the root path to your path
-1. The nginx.conf file has to be modified to serve HTML page, here is the code:
-```
+To serve static content with Nginx, follow these steps:
+
+1. Modify the nginx.conf file to serve HTML pages. Here is the code snippet to add:
+```bash
 http {
     server {
         listen 8080;
@@ -60,38 +71,40 @@ http {
 }
 event {}
 ```
-Nginx is listening on port 8080 and root server all the files that are in this folder “mysite”. By default, it searches for to index.html file.
-*You will have to create a folder on your desktop for example "mysite" that will contain your HTML code.
+Make sure to change the root path to your actual project path. Nginx will serve files from the "mysite" folder, and it looks for an "index.html" file by default.
 
-2. Nginx has to be reloaded after each update, run this command in the terminal to reload Nginx:
-```
+
+2. Reload Nginx after making changes to the configuration:
+```bash
 nginx -s reload
 ```
 
-3. To accept all the file types in the project we need to include the “mime.types” file in the config file:
-```
+3. To ensure that Nginx can serve various file types in your project, include the "mime.types" file in the configuration:
+```bash
 include mime.types
 ```
 
 ### Location Contexte
 
-1. We can serve different HTML files. To serve another location we add the location in the server block:
+Location contexts allow you to serve different HTML files for specific URLs. Here's how to use them:
 
-```
+1. To serve content at a specific URL, add a location block:
+
+```bash
 location /fruits {
     root /another/loction;
 }
 ```
 
-2. To access the same content page but with a different ending url we need to use the “alias” keyword instead of root in our new location block:
+2. To serve content with a different URL ending, use the "alias" keyword in the location block:
 ```
 location /carbs {
     alias /your/path/mysite/fruits;
 }
 ```
 
-3. To use a custom HTML filename (not index), we have to use “try_files” to try to find the HTML file that correspond:
-```
+3. To use a custom HTML filename (not "index.html"), use "try_files" to search for the corresponding file:
+```bash
 location /vegetables {
     alias /your/path/mysite;
     try_files /vegetables/veggies.html /index.html =404;
@@ -100,7 +113,7 @@ location /vegetables {
 ##### How it work?
 
 try_files need 3 arguments:
-```
+```bash
 try_files arg1 arg2 arg3;
 ```
 
@@ -109,7 +122,7 @@ try_files arg1 arg2 arg3;
 * arg3 → If it also failed, throw a 404 error
 
 4. To use regular expression:
-```
+```bash
 location ~* /count/[0-9] {
     root /your/path/mysite;
     try_files /index.html =404;
@@ -118,19 +131,21 @@ location ~* /count/[0-9] {
 
 ### Redirect and Rewrites
 
-1. To redirect the user, we use the code 307 followed by the page that we want to display:
-```
+Redirects and rewrites are used for URL manipulation:
+
+1. To redirect a user, use the code 307 followed by the target page:
+```bash
 location /crops {
     return 307 /fruits;
 }
 ```
 
-2. To rewrite a page:
-```
+2. To rewrite a URL:
+```bash
 rewrite ^/number/(\w+) /count/$1;
 ```
-\w+ → Mean the variable
-$1 → It’s the variable
+* \w+ → Mean the variable
+* $1 → It’s the variable
 
 ##### The difference between the redirect and the rewrite is:
 
@@ -139,33 +154,34 @@ $1 → It’s the variable
 
 ### Load Balancer
 
-We are gonna use Docker to create a server:
+In this section, we'll use Docker to create a load-balanced server. Follow these steps:
+
 1. Create a server folder in the project
 
 2. Create an index.js file in the server folder
 
 3. Go to the server folder:
-```
+```bash
 cd server
 ```
 
-4. Run the command to initialize a node application:
-```
+4. Initialize a Node.js application:
+```bash
 npm init
 ```
 
-5. Run the command:
-```
+5. Accept all defaults when prompted:
+```bash
 npm init -y
 ```
 
-6. Run the command to have the server:
-```
+6. Install the Express.js library:
+```bash
 npm install express
 ```
 
-7. Create a basic node application:
-```
+7. Create a basic Node.js application in "index.js":
+```js
 const express = require('express')
 
 const app = express()
@@ -180,17 +196,17 @@ app.listen(7777, () => {
 ```
 
 8. To run the application from the script, add to “package.json” in the section script:
-```
+```json
 "start": "node index"
 ```
 
-9. To execute the start, run:
-```
+9. Run the application using the script:
+```bash
 npm run start
 ```
 
-10. Create a docker file in the server folder to run the server:
-```
+10. Create a Dockerfile in the "server" folder to run the server:
+```Dockerfile
 FROM node:16
 
 # Setting up the work directory
@@ -213,29 +229,27 @@ CMD [ "npm", "run", "start"]
 
 11. Open the docker application in mac
 
-12. Run the command to start a docker container:
-```
+12. Build a Docker image for your server:
+```bash
 docker build . -t myserver
 ```
 
-13. Run the container of the image that we created and mapped to port 1111:
-```
+13. Run a container from the image and map it to port 1111:
+```bash 
 docker run -p 1111:7777 -d myserver
 ```
-p. → for mapping
-d → in detached mode
-We can see in the  application the container running
+* p. → for mapping
+* d → in detached mode
 
-
-14. Running different ports to have multiple servers:
-```
+14. Run different ports to have multiple servers:
+```bash 
 docker run -p 2222:7777 -d myserver
 docker run -p 3333:7777 -d myserver
 docker run -p 4444:7777 -d myserver
 ```
 
-15. Add these lines in the config file to round robben  the requests to different servers each time:
-```
+15. Modify the Nginx configuration file to enable load balancing:
+```bash
 upstream backendserver {
         server 127.0.0.1:1111;
         server 127.0.0.1:2222;
