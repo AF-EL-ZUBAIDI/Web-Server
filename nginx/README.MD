@@ -129,7 +129,7 @@ location ~* /count/[0-9] {
 }
 ```
 
-### Redirect and Rewrites
+### Redirect and Rewrites (advanced)
 
 Redirects and rewrites are used for URL manipulation:
 
@@ -152,7 +152,7 @@ rewrite ^/number/(\w+) /count/$1;
 - Redirect: change the URL to the page displayed
 - Rewrite: Keep the same URL but load the redirected page
 
-### Load Balancer
+### Load Balancer (advanced)
 
 In this section, we'll use Docker to create a load-balanced server. Follow these steps:
 
